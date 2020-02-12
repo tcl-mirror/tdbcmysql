@@ -1444,12 +1444,14 @@ ConnectionConstructor(
 
 static int
 ConnectionBegintransactionMethod(
-    ClientData clientData,	/* Unused */
+    ClientData dummy,	/* Unused */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
     Tcl_Obj *const objv[]	/* Parameter vector */
 ) {
+    (void)dummy;
+
     Tcl_Object thisObject = Tcl_ObjectContextObject(objectContext);
 				/* The current connection object */
     ConnectionData* cdata = (ConnectionData*)
@@ -1508,7 +1510,7 @@ ConnectionBegintransactionMethod(
 
 static int
 ConnectionColumnsMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Completion type */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -1529,6 +1531,7 @@ ConnectionColumnsMethod(
     Tcl_Obj* name;		/* Name of a column */
     Tcl_Obj* attrs;		/* Attributes of the column */
     Tcl_HashEntry* entry;	/* Hash entry for data type */
+    (void)dummy;
 
     /* Check parameters */
 
@@ -1610,7 +1613,7 @@ ConnectionColumnsMethod(
 
 static int
 ConnectionCommitMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -1622,6 +1625,7 @@ ConnectionCommitMethod(
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
 				/* Instance data */
     my_bool rc;			/* MySQL status return */
+    (void)dummy;
 
     /* Check parameters */
 
@@ -1685,7 +1689,7 @@ ConnectionCommitMethod(
  */
 
 static int ConnectionConfigureMethod(
-     ClientData clientData,
+     ClientData dummy,
      Tcl_Interp* interp,
      Tcl_ObjectContext objectContext,
      int objc,
@@ -1697,6 +1701,8 @@ static int ConnectionConfigureMethod(
 				/* Number of arguments to skip */
     ConnectionData* cdata = (ConnectionData*)
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
+    (void)dummy;
+
 				/* Instance data */
     return ConfigureConnection(cdata, interp, objc, objv, skip);
 }
@@ -1731,7 +1737,7 @@ static int ConnectionConfigureMethod(
 
 static int
 ConnectionEvaldirectMethod(
-    ClientData clientData,	     /* Unused */
+    ClientData dummy,	     /* Unused */
     Tcl_Interp* interp,		     /* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			     /* Parameter count */
@@ -1750,6 +1756,7 @@ ConnectionEvaldirectMethod(
     Tcl_Obj* rowObj;		/* One row of the result set as a Tcl list */
     Tcl_Obj* fieldObj;		/* One field of the row */
     int i;
+    (void)dummy;
 
     /* Check parameters */
 
@@ -1834,7 +1841,7 @@ ConnectionEvaldirectMethod(
 
 static int
 ConnectionNeedCollationInfoMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -1845,6 +1852,7 @@ ConnectionNeedCollationInfoMethod(
     ConnectionData* cdata = (ConnectionData*)
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
 				/* Instance data */
+    (void)dummy;
 
     if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "");
@@ -1878,7 +1886,7 @@ ConnectionNeedCollationInfoMethod(
 
 static int
 ConnectionRollbackMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -1890,6 +1898,7 @@ ConnectionRollbackMethod(
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
 				/* Instance data */
     my_bool rc;		/* Result code from MySQL operations */
+    (void)dummy;
 
     /* Check parameters */
 
@@ -1946,7 +1955,7 @@ ConnectionRollbackMethod(
 
 static int
 ConnectionSetCollationInfoMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -1962,6 +1971,7 @@ ConnectionSetCollationInfoMethod(
     unsigned int collationNum;
     int i;
     int t;
+    (void)dummy;
 
     if (objc <= 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "{collationNum size}...");
@@ -2032,7 +2042,7 @@ ConnectionSetCollationInfoMethod(
 
 static int
 ConnectionTablesMethod(
-    ClientData clientData,	/* Completion type */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext objectContext, /* Object context */
     int objc,			/* Parameter count */
@@ -2051,6 +2061,7 @@ ConnectionTablesMethod(
     MYSQL_ROW row = NULL;	/* Row in the result set */
     int status = TCL_OK;	/* Return status */
     Tcl_Obj* retval = NULL;	/* List of table names */
+    (void)dummy;
 
     /* Check parameters */
 
@@ -2134,10 +2145,12 @@ DeleteCmd (
 
 static int
 CloneCmd(
-    Tcl_Interp* interp,		/* Tcl interpreter */
+    Tcl_Interp* dummy,		/* Tcl interpreter */
     ClientData oldClientData,	/* Environment handle to be discarded */
     ClientData* newClientData	/* New environment handle to be used */
 ) {
+    (void)dummy;
+
     *newClientData = oldClientData;
     return TCL_OK;
 }
@@ -2205,6 +2218,9 @@ CloneConnection(
     ClientData metadata,	/* Metadata to be cloned */
     ClientData* newMetaData	/* Where to put the cloned metadata */
 ) {
+    (void)metadata;
+    (void)newMetaData;
+
     Tcl_SetObjResult(interp,
 		     Tcl_NewStringObj("MYSQL connections are not clonable", -1));
     return TCL_ERROR;
@@ -2324,6 +2340,7 @@ ResultDescToTcl(
     int isNew;			/* Flag == 1 if a result column is unique */
     Tcl_HashEntry* entry;	/* Hash table entry for a column name */
     int count;			/* Number used to disambiguate a column name */
+    (void)flags;
 
     Tcl_InitHashTable(&names, TCL_STRING_KEYS);
     if (result != NULL) {
@@ -2383,13 +2400,12 @@ ResultDescToTcl(
 
 static int
 StatementConstructor(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
     Tcl_Obj *const objv[]	/* Parameter vector */
 ) {
-
     Tcl_Object thisObject = Tcl_ObjectContextObject(context);
 				/* The current statement object */
     int skip = Tcl_ObjectContextSkippedArgs(context);
@@ -2407,6 +2423,7 @@ StatementConstructor(
     int tokenLen;		/* Length of a token */
     int nParams;		/* Number of parameters of the statement */
     int i;
+    (void)dummy;
 
     /* Find the connection object, and get its data. */
 
@@ -2545,7 +2562,7 @@ StatementConstructor(
 
 static int
 StatementParamsMethod(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
@@ -2566,6 +2583,7 @@ StatementParamsMethod(
     Tcl_Obj* retVal;		/* Return value from this command */
     Tcl_HashEntry* typeHashEntry;
     int i;
+    (void)dummy;
 
     if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "");
@@ -2633,7 +2651,7 @@ StatementParamsMethod(
 
 static int
 StatementParamtypeMethod(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
@@ -2667,6 +2685,7 @@ StatementParamtypeMethod(
     Tcl_Obj* errorObj;		/* Error message */
 
     int i;
+    (void)dummy;
 
     /* Check parameters */
 
@@ -2817,6 +2836,9 @@ CloneStatement(
     ClientData metadata,	/* Metadata to be cloned */
     ClientData* newMetaData	/* Where to put the cloned metadata */
 ) {
+    (void)metadata;
+    (void)newMetaData;
+
     Tcl_SetObjResult(interp,
 		     Tcl_NewStringObj("MySQL statements are not clonable", -1));
     return TCL_ERROR;
@@ -2847,13 +2869,12 @@ CloneStatement(
 
 static int
 ResultSetConstructor(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
     Tcl_Obj *const objv[]	/* Parameter vector */
 ) {
-
     Tcl_Object thisObject = Tcl_ObjectContextObject(context);
 				/* The current result set object */
     int skip = Tcl_ObjectContextSkippedArgs(context);
@@ -2876,6 +2897,7 @@ ResultSetConstructor(
     unsigned long* resultLengths;
 				/* Lengths of the columns of the result set */
     int i;
+    (void)dummy;
 
     /* Check parameter count */
 
@@ -3185,7 +3207,7 @@ ResultSetConstructor(
 
 static int
 ResultSetColumnsMethod(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
@@ -3197,6 +3219,7 @@ ResultSetColumnsMethod(
     ResultSetData* rdata = (ResultSetData*)
 	Tcl_ObjectGetMetadata(thisObject, &resultSetDataType);
     StatementData* sdata = (StatementData*) rdata->sdata;
+    (void)dummy;
 
     if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "?pattern?");
@@ -3422,18 +3445,18 @@ ResultSetNextrowMethod(
 
 static int
 ResultSetRowcountMethod(
-    ClientData clientData,	/* Not used */
+    ClientData dummy,	/* Not used */
     Tcl_Interp* interp,		/* Tcl interpreter */
     Tcl_ObjectContext context,	/* Object context  */
     int objc, 			/* Parameter count */
     Tcl_Obj *const objv[]	/* Parameter vector */
 ) {
-
     Tcl_Object thisObject = Tcl_ObjectContextObject(context);
 				/* The current result set object */
     ResultSetData* rdata = (ResultSetData*)
 	Tcl_ObjectGetMetadata(thisObject, &resultSetDataType);
 				/* Data pertaining to the current result set */
+    (void)dummy;
 
     if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "");
@@ -3527,6 +3550,9 @@ CloneResultSet(
     ClientData metadata,	/* Metadata to be cloned */
     ClientData* newMetaData	/* Where to put the cloned metadata */
 ) {
+    (void)metadata;
+    (void)newMetaData;
+
     Tcl_SetObjResult(interp,
 		     Tcl_NewStringObj("MySQL result sets are not clonable",
 				      -1));
