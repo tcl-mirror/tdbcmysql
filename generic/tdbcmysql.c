@@ -1450,12 +1450,11 @@ ConnectionBegintransactionMethod(
     int objc,			/* Parameter count */
     Tcl_Obj *const objv[]	/* Parameter vector */
 ) {
-    (void)dummy;
-
     Tcl_Object thisObject = Tcl_ObjectContextObject(objectContext);
 				/* The current connection object */
     ConnectionData* cdata = (ConnectionData*)
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
+    (void)dummy;
 
     /* Check parameters */
 
