@@ -20,7 +20,7 @@
 #include <tcl.h>
 #include <tclOO.h>
 #include <tdbc.h>
-
+#include "tdbcMysqlUuid.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -95,7 +95,7 @@ typedef struct PerInterpData {
 #define DecrPerInterpRefCount(x)		\
     do {					\
 	PerInterpData* _pidata = x;		\
-	if (((_pidata->refCount))-- <= 1) {	\
+	if (_pidata->refCount-- <= 1) {	\
 	    DeletePerInterpData(_pidata);	\
 	}					\
     } while(0)
@@ -136,7 +136,7 @@ typedef struct ConnectionData {
 #define DecrConnectionRefCount(x)		\
     do {					\
 	ConnectionData* conn = x;		\
-	if (((conn->refCount)--) <= 01) {	\
+	if (conn->refCount-- <= 1) {	\
 	    DeleteConnection(conn);		\
 	}					\
     } while(0)
@@ -3584,6 +3584,7 @@ Tdbcmysql_Init(
     Tcl_Object curClassObject;  /* Tcl_Object representing the current class */
     Tcl_Class curClass;		/* Tcl_Class representing the current class */
     int i;
+    Tcl_CmdInfo info;
 
     /* Require all package dependencies */
 
@@ -3595,6 +3596,63 @@ Tdbcmysql_Init(
     }
     if (Tdbc_InitStubs(interp) == NULL) {
 	return TCL_ERROR;
+    }
+
+    if (Tcl_GetCommandInfo(interp, "::tcl::build-info", &info)) {
+	Tcl_CreateObjCommand(interp, "::tdbc::mysql::build-info",
+		info.objProc, (void *)(
+		    PACKAGE_VERSION "+" STRINGIFY(TDBC_MYSQL_VERSION_UUID)
+#if defined(__clang__) && defined(__clang_major__)
+			    ".clang-" STRINGIFY(__clang_major__)
+#if __clang_minor__ < 10
+			    "0"
+#endif
+			    STRINGIFY(__clang_minor__)
+#endif
+#if defined(__cplusplus) && !defined(__OBJC__)
+			    ".cplusplus"
+#endif
+#ifndef NDEBUG
+			    ".debug"
+#endif
+#if !defined(__clang__) && !defined(__INTEL_COMPILER) && defined(__GNUC__)
+			    ".gcc-" STRINGIFY(__GNUC__)
+#if __GNUC_MINOR__ < 10
+			    "0"
+#endif
+			    STRINGIFY(__GNUC_MINOR__)
+#endif
+#ifdef __INTEL_COMPILER
+			    ".icc-" STRINGIFY(__INTEL_COMPILER)
+#endif
+#ifdef TCL_MEM_DEBUG
+			    ".memdebug"
+#endif
+#if defined(_MSC_VER)
+			    ".msvc-" STRINGIFY(_MSC_VER)
+#endif
+#ifdef USE_NMAKE
+			    ".nmake"
+#endif
+#ifndef TCL_CFG_OPTIMIZED
+			    ".no-optimize"
+#endif
+#ifdef __OBJC__
+			    ".objective-c"
+#if defined(__cplusplus)
+			    "plusplus"
+#endif
+#endif
+#ifdef TCL_CFG_PROFILED
+			    ".profile"
+#endif
+#ifdef PURIFY
+			    ".purify"
+#endif
+#ifdef STATIC_BUILD
+			    ".static"
+#endif
+		), NULL);
     }
 
     /* Provide the current package */
