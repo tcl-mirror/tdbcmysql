@@ -47,21 +47,6 @@
 #   endif
 #endif
 
-#if TCL_MAJOR_VERSION > 8
-#   define TDBCMYSQL_Z_MODIFIER TCL_Z_MODIFIER
-#else
-#   define TDBCMYSQL_Z_MODIFIER ""
-#endif
-
-#if !defined(ItclSizeT)
-    #if TCL_MAJOR_VERSION > 8
-	#define TdbcMySqlSizeT size_t
-    #else
-	#define TdbcMySqlSizeT int
-    #endif
-#endif
-
-
 /* Static data contained in this file */
 
 TCL_DECLARE_MUTEX(mysqlMutex);	/* Mutex protecting the global environment
@@ -1988,7 +1973,7 @@ ConnectionSetCollationInfoMethod(
     ConnectionData* cdata = (ConnectionData*)
 	Tcl_ObjectGetMetadata(thisObject, &connectionDataType);
 				/* Instance data */
-    TdbcMySqlSizeT listLen;
+    int listLen;
     Tcl_Obj* objPtr;
     unsigned int collationNum;
     int i;
@@ -2430,13 +2415,13 @@ StatementConstructor(
     ConnectionData* cdata;	/* The connection object's data */
     StatementData* sdata;	/* The statement's object data */
     Tcl_Obj* tokens;		/* The tokens of the statement to be prepared */
-    TdbcMySqlSizeT tokenc;			/* Length of the 'tokens' list */
+    int tokenc;			/* Length of the 'tokens' list */
     Tcl_Obj** tokenv;		/* Exploded tokens from the list */
     Tcl_Obj* nativeSql;		/* SQL statement mapped to native form */
     char* tokenStr;		/* Token string */
     int tokenLen;		/* Length of a token */
-    TdbcMySqlSizeT nParams;		/* Number of parameters of the statement */
-    TdbcMySqlSizeT i;
+    int nParams;		/* Number of parameters of the statement */
+    int i;
 
     /* Find the connection object, and get its data. */
 
@@ -2589,13 +2574,13 @@ StatementParamsMethod(
     ConnectionData* cdata = sdata->cdata;
     PerInterpData* pidata = cdata->pidata; /* Per-interp data */
     Tcl_Obj** literals = pidata->literals; /* Literal pool */
-    TdbcMySqlSizeT nParams;		/* Number of parameters to the statement */
+    int nParams;		/* Number of parameters to the statement */
     Tcl_Obj* paramName;		/* Name of a parameter */
     Tcl_Obj* paramDesc;		/* Description of one parameter */
     Tcl_Obj* dataTypeName;	/* Name of a parameter's data type */
     Tcl_Obj* retVal;		/* Return value from this command */
     Tcl_HashEntry* typeHashEntry;
-    TdbcMySqlSizeT i;
+    int i;
 
     if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 2, objv, "");
@@ -2688,7 +2673,7 @@ StatementParamtypeMethod(
     int precision;		/* Data precision */
     int scale;			/* Data scale */
 
-    TdbcMySqlSizeT nParams;		/* Number of parameters to the statement */
+    int nParams;		/* Number of parameters to the statement */
     const char* paramName;	/* Name of the parameter being set */
     Tcl_Obj* targetNameObj;	/* Name of the ith parameter in the statement */
     const char* targetName;	/* Name of a candidate parameter in the
@@ -2697,7 +2682,7 @@ StatementParamtypeMethod(
     Tcl_Obj* errorObj;		/* Error message */
 
     int i;
-    TdbcMySqlSizeT j;
+    int j;
 
     /* Check parameters */
 
@@ -2892,20 +2877,20 @@ ResultSetConstructor(
     ConnectionData* cdata;	/* The MySQL connection object's data */
     StatementData* sdata;	/* The statement object's data */
     ResultSetData* rdata;	/* THe result set object's data */
-    TdbcMySqlSizeT nParams;		/* The parameter count on the statement */
-    TdbcMySqlSizeT nBound;			/* Number of parameters bound so far */
+    int nParams;		/* The parameter count on the statement */
+    int nBound;			/* Number of parameters bound so far */
     Tcl_Obj* paramNameObj;	/* Name of the current parameter */
     const char* paramName;	/* Name of the current parameter */
     Tcl_Obj* paramValObj;	/* Value of the current parameter */
     const char* paramValStr;	/* String value of the current parameter */
     char* bufPtr;		/* Pointer to the parameter buffer */
     int len;			/* Length of a bound parameter */
-    TdbcMySqlSizeT nColumns;		/* Number of columns in the result set */
+    int nColumns;		/* Number of columns in the result set */
     MYSQL_FIELD* fields = NULL;	/* Description of columns of the result set */
     MYSQL_BIND* resultBindings;	/* Bindings of the columns of the result set */
     unsigned long* resultLengths;
 				/* Lengths of the columns of the result set */
-    TdbcMySqlSizeT i;
+    int i;
 
     /* Check parameter count */
 
@@ -3293,7 +3278,7 @@ ResultSetNextrowMethod(
     Tcl_Obj** literals = pidata->literals;
 				/* Literal pool */
 
-    TdbcMySqlSizeT nColumns = 0;		/* Number of columns in the result set */
+    int nColumns = 0;		/* Number of columns in the result set */
     Tcl_Obj* colName;		/* Name of the current column */
     Tcl_Obj* resultRow;		/* Row of the result set under construction */
 
@@ -3310,7 +3295,7 @@ ResultSetNextrowMethod(
     unsigned char byte;		/* One byte extracted from a bit field */
     Tcl_WideInt bitVal;		/* Value of a bit field */
     int mysqlStatus;		/* Status return from MySQL */
-    TdbcMySqlSizeT i;
+    int i;
     unsigned int j;
 
     if (objc != 3) {
@@ -3497,9 +3482,9 @@ DeleteResultSet(
     ResultSetData* rdata	/* Metadata for the result set */
 ) {
     StatementData* sdata = rdata->sdata;
-    TdbcMySqlSizeT i;
-    TdbcMySqlSizeT nParams;
-    TdbcMySqlSizeT nColumns;
+    int i;
+    int nParams;
+    int nColumns;
     Tcl_ListObjLength(NULL, sdata->subVars, &nParams);
     Tcl_ListObjLength(NULL, sdata->columnNames, &nColumns);
     for (i = 0; i < nColumns; ++i) {
